@@ -62,7 +62,7 @@ async function login() {
   const res = await fetch(`${BASE_URL}/session`, {
     method: 'POST',
     headers: { 'X-CAP-API-KEY': CONFIG.apiKey, 'Content-Type': 'application/json' },
-    body: JSON.stringify({ identifier: CONFIG.identifier, password: CONFIG.password, encryptedPassword: false }),
+    body: JSON.stringify({ identifier: CONFIG.identifier, password: CONFIG.password }),
   });
   if (!res.ok) throw new Error(`Logowanie nieudane (HTTP ${res.status}): ${await res.text()}`);
   session = { cst: res.headers.get('CST'), token: res.headers.get('X-SECURITY-TOKEN') };
