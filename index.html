@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="pl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Wskaźniki kwartalne</title>
+  <link rel="stylesheet" href="css/dashboard.css">
+</head>
+<body>
+  <main class="page">
+    <header class="page-head">
+      <div>
+        <h1>Wskaźniki kwartalne</h1>
+        <p class="muted">Źródło danych: <span id="source"></span></p>
+      </div>
+    </header>
+
+    <section class="controls" aria-label="Filtry">
+      <label>Kwartał
+        <select id="quarter"></select>
+      </label>
+      <label>Czułość wykrywania
+        <select id="sensitivity">
+          <option value="niska">Niska (|z| ≥ 4,5)</option>
+          <option value="standardowa" selected>Standardowa (|z| ≥ 3,5)</option>
+          <option value="wysoka">Wysoka (|z| ≥ 3,0)</option>
+        </select>
+      </label>
+      <div class="control-buttons">
+        <label class="button">Wczytaj CSV
+          <input id="file" type="file" accept=".csv,.tsv,.txt,text/csv" hidden>
+        </label>
+        <button id="reset" type="button" class="button button-ghost">Dane przykładowe</button>
+        <button id="template" type="button" class="button button-ghost">Pobierz wzór CSV</button>
+      </div>
+    </section>
+
+    <div id="messages"></div>
+
+    <section id="summary" class="summary" aria-live="polite"></section>
+
+    <section id="tiles" class="tiles" aria-label="Wyniki wskaźników w wybranym kwartale"></section>
+
+    <section class="card">
+      <div class="card-head">
+        <h2>Wykryte anomalie <span id="anomaly-count" class="muted"></span></h2>
+        <label class="checkbox"><input id="only-selected" type="checkbox"> Tylko wybrany kwartał</label>
+      </div>
+      <div class="table-wrap">
+        <table id="anomalies" class="table">
+          <thead>
+            <tr>
+              <th>Status</th>
+              <th>Kwartał</th>
+              <th>Wskaźnik</th>
+              <th class="num">Wartość</th>
+              <th class="num">Oczekiwana</th>
+              <th class="num">Odchylenie</th>
+              <th class="num" title="Zmodyfikowany z-score">z</th>
+              <th>Ocena</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="card-head">
+        <h2>Przebieg wskaźników</h2>
+        <ul class="legend" aria-label="Legenda">
+          <li><span class="lg lg-value"></span>Wartość</li>
+          <li><span class="lg lg-expected"></span>Oczekiwana</li>
+          <li><span class="lg lg-band"></span>Zakres normy</li>
+          <li><span class="lg lg-anomaly"></span>Anomalia</li>
+          <li><span class="lg lg-watch"></span>Do obserwacji</li>
+        </ul>
+      </div>
+      <p class="muted hint">Najedź na wykres, aby zobaczyć szczegóły; kliknij, aby wybrać kwartał.</p>
+      <div id="charts" class="charts"></div>
+    </section>
+
+    <details class="card">
+      <summary><h2>Dane źródłowe</h2></summary>
+      <div class="table-wrap">
+        <table id="data-table" class="table"></table>
+      </div>
+    </details>
+
+    <details class="card method">
+      <summary><h2>Jak wykrywane są anomalie?</h2></summary>
+      <ol>
+        <li><strong>Sezonowość</strong> — dla każdego kwartału roku liczony jest indeks sezonowy
+          (mediana stosunku wartości do centrowanej średniej ruchomej 2×4).</li>
+        <li><strong>Wartość oczekiwana</strong> — odporny trend Theila–Sena dopasowany do 6 najbliższych kwartałów
+          (bez badanego), z przywróconą sezonowością. Ostatni kwartał oceniany jest wyłącznie na podstawie historii.
+          Kwartały uznane za anomalie są wyłączane z dopasowania trendu sąsiadów (drugi przebieg).</li>
+        <li><strong>Ocena</strong> — odchylenie od oczekiwanej przeliczane na zmodyfikowany z-score
+          (0,6745 · (r − mediana) / MAD). Anomalia: |z| powyżej progu czułości; „do obserwacji”: o 1 niżej.
+          Zakres normy na wykresach odpowiada progowi anomalii.</li>
+        <li><strong>Ocena korzystna / niekorzystna</strong> wynika z kolumny <code>kierunek</code>
+          (<code>wyżej</code> — więcej znaczy lepiej, <code>niżej</code> — mniej znaczy lepiej).</li>
+      </ol>
+      <p class="muted">Wymagane minimum: 8 kwartałów danych na wskaźnik.</p>
+    </details>
+  </main>
+
+  <div id="tooltip" class="tooltip" role="status" hidden></div>
+
+  <script src="js/anomalies.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/sample-data.js"></script>
+  <script src="js/dashboard.js"></script>
+</body>
+</html>
