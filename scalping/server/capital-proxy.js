@@ -11,6 +11,7 @@
  *   CAPITAL_DEMO=1 (konto demo), CAPITAL_EPIC=US100, PORT=8787
  *
  * Uruchomienie:  node scalping/server/capital-proxy.js
+ * Dostęp z telefonu: DOSTEP_Z_SIECI=1 (adresy do wpisania w telefonie pojawią się po starcie).
  * Diagnostyka:   node scalping/server/capital-proxy.js --szukaj "US Tech"   (lista epiców)
  *                node scalping/server/capital-proxy.js --sprawdz           (surowa ostatnia świeca)
  */
@@ -19,6 +20,7 @@
 const http = require('node:http');
 const fs = require('node:fs');
 const path = require('node:path');
+const os = require('node:os');
 const Market = require('../js/market.js');
 
 const ROOT = path.resolve(__dirname, '..');
@@ -41,6 +43,8 @@ const CONFIG = {
   demo: /^(1|true|tak)$/i.test(process.env.CAPITAL_DEMO || ''),
   epic: process.env.CAPITAL_EPIC || 'US100',
   port: Number(process.env.PORT) || 8787,
+  // DOSTEP_Z_SIECI=1: aplikacja dostępna też z telefonu w tej samej sieci (np. domowe Wi-Fi, Tailscale).
+  lan: /^(1|true|tak)$/i.test(process.env.DOSTEP_Z_SIECI || ''),
 };
 // CAPITAL_BASE_URL służy tylko do testów z atrapą API.
 const BASE_URL = process.env.CAPITAL_BASE_URL || (CONFIG.demo
@@ -153,8 +157,13 @@ function startServer() {
       return;
     }
     serveStatic(req, res);
-  }).listen(CONFIG.port, '127.0.0.1', () => {
+  }).listen(CONFIG.port, CONFIG.lan ? '0.0.0.0' : '127.0.0.1', () => {
     log(`Pulpit scalpera: http://127.0.0.1:${CONFIG.port}  (instrument ${CONFIG.epic}, świece 5 min)`);
+    if (!CONFIG.lan) return;
+    const addrs = Object.values(os.networkInterfaces()).flat()
+      .filter((a) => a && a.family === 'IPv4' && !a.internal).map((a) => a.address);
+    for (const a of addrs) log(`Z telefonu w tej samej sieci: http://${a}:${CONFIG.port}`);
+    if (!addrs.length) log('Nie znaleziono adresu w sieci lokalnej.');
   });
 }
 

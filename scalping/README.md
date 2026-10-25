@@ -40,6 +40,11 @@ Serwer pobiera dane 10 s po zamknięciu każdej świecy 5-minutowej (na starcie 
 po wygaśnięciu, zapisuje świece w `scalping/dane/` (poza repozytorium, ostatnie 3000) i nasłuchuje tylko na 127.0.0.1.
 Strona odpytuje go co 30 s i pokazuje status: na żywo / dane nieaktualne / brak notowań (rynek zamknięty) / błąd.
 
+**Na telefonie:** ustaw `DOSTEP_Z_SIECI=1` w `.env` i uruchom serwer — po starcie wypisze adresy typu `http://192.168.1.23:8787`
+do otwarcia w telefonie podłączonym do tego samego Wi-Fi. Poza domem: zainstaluj Tailscale na komputerze i telefonie
+(to samo konto) i otwórz `http://<adres-Tailscale-komputera>:8787`. Udostępniane są tylko pliki aplikacji i notowania —
+nigdy `.env`. Dziennik na telefonie jest osobny (zapisuje się w przeglądarce telefonu).
+
 Otwarta jako plik (`file://`) aplikacja działa normalnie, a zakładka notowań pokazuje instrukcję uruchomienia serwera.
 
 ## Instrumenty
