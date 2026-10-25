@@ -9,6 +9,7 @@
     akcje: { label: 'Akcje', multiplier: 1, tick: 0.01, qtyStep: 1, feePct: 0.39, feePerUnit: 0, feeMin: 5, leverage: 1 },
     fw20: { label: 'Kontrakt FW20', multiplier: 20, tick: 1, qtyStep: 1, feePct: 0, feePerUnit: 9, feeMin: 0, leverage: 10 },
     krypto: { label: 'Kryptowaluty', multiplier: 1, tick: 0.01, qtyStep: 0.0001, feePct: 0.1, feePerUnit: 0, feeMin: 0, leverage: 1 },
+    ustech: { label: 'USTECH100 (CFD)', multiplier: 1, tick: 0.1, qtyStep: 0.1, feePct: 0, feePerUnit: 0, feeMin: 0, leverage: 20 },
     forex: { label: 'Forex (1 lot = 100 000)', multiplier: 100000, tick: 0.00001, qtyStep: 0.01, feePct: 0, feePerUnit: 0, feeMin: 0, leverage: 30 },
     wlasny: { label: 'Własny', multiplier: 1, tick: 0.01, qtyStep: 1, feePct: 0, feePerUnit: 0, feeMin: 0, leverage: 1 },
   };
@@ -424,4 +425,21 @@
   }
 
   init();
+
+  // Dla zakładki notowań: ustawia kierunek i cenę wejścia w kalkulatorze.
+  window.ScalpApp = {
+    useEntry(side, price) {
+      const s = state.settings;
+      if (s.preset !== 'ustech') {
+        $('#preset').value = 'ustech';
+        $('#preset').dispatchEvent(new Event('change'));
+      }
+      s.side = side;
+      s.entry = inputValue(price, priceDecimals());
+      $('#entry').value = s.entry;
+      save();
+      render();
+      $('#stop').focus();
+    },
+  };
 })();

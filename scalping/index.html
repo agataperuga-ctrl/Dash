@@ -11,10 +11,17 @@
     <header class="page-head">
       <div>
         <h1>Pulpit scalpera</h1>
-        <p class="muted">Wielkość pozycji, próg rentowności po prowizjach, dziennik i dzienne limity ryzyka.</p>
+        <p class="muted">Wielkość pozycji, próg rentowności po prowizjach, dziennik, dzienne limity ryzyka i notowania z Capital.com.</p>
       </div>
       <div id="guard-pill" class="pill" role="status" aria-live="polite"></div>
     </header>
+
+    <nav class="tabs" role="tablist" aria-label="Widok">
+      <button type="button" role="tab" id="tab-btn-calc" aria-controls="tab-calc" data-tab="calc">Kalkulator i dziennik</button>
+      <button type="button" role="tab" id="tab-btn-market" aria-controls="tab-market" data-tab="market">USTECH100 <span id="market-dot" class="dot" aria-hidden="true"></span></button>
+    </nav>
+
+    <div id="tab-calc" class="tabpanel" role="tabpanel" aria-labelledby="tab-btn-calc">
 
     <section class="card">
       <h2>Konto i limity dnia</h2>
@@ -161,9 +168,70 @@
     <p class="muted small">Skróty (poza polami tekstowymi): <kbd>L</kbd>/<kbd>S</kbd> kierunek,
       <kbd>T</kbd>/<kbd>X</kbd>/<kbd>B</kbd> wyjście po TP / SL / BE, <kbd>Enter</kbd> w formularzu zapisuje transakcję.
       Dane zapisywane są tylko w tej przeglądarce. Narzędzie pomocnicze — nie składa zleceń i nie jest poradą inwestycyjną.</p>
+    </div>
+
+    <div id="tab-market" class="tabpanel" role="tabpanel" aria-labelledby="tab-btn-market" hidden>
+      <section class="card" aria-labelledby="market-title">
+        <div class="card-head">
+          <div>
+            <h2 id="market-title">USTECH100 · świece 5 min</h2>
+            <p id="market-meta" class="muted small"></p>
+          </div>
+          <span id="market-status" class="pill"></span>
+        </div>
+        <div id="market-messages"></div>
+        <div id="market-tiles" class="tiles"></div>
+        <div class="control-buttons">
+          <button id="use-long" type="button" class="button">Wejście long po ask</button>
+          <button id="use-short" type="button" class="button">Wejście short po bid</button>
+        </div>
+      </section>
+
+      <section class="card" aria-labelledby="chart-title">
+        <div class="card-head">
+          <h2 id="chart-title">Wykres (bid)</h2>
+          <div class="segmented" role="group" aria-label="Zakres wykresu">
+            <button type="button" class="seg" data-span="36">3 h</button>
+            <button type="button" class="seg" data-span="72">6 h</button>
+            <button type="button" class="seg" data-span="144">12 h</button>
+            <button type="button" class="seg" data-span="288">24 h</button>
+          </div>
+        </div>
+        <div id="chart" class="chart" role="img" aria-label="Wykres świecowy USTECH100"></div>
+        <ul class="legend" aria-label="Legenda">
+          <li><span class="lg lg-up"></span>Świeca wzrostowa (pusta)</li>
+          <li><span class="lg lg-down"></span>Świeca spadkowa (wypełniona)</li>
+          <li><span class="lg lg-live"></span>Świeca w trakcie</li>
+        </ul>
+      </section>
+
+      <section class="card" aria-labelledby="candles-title">
+        <h2 id="candles-title">Ostatnie świece</h2>
+        <div class="table-wrap">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Czas</th>
+                <th class="num">Otwarcie</th>
+                <th class="num">Maks.</th>
+                <th class="num">Min.</th>
+                <th class="num">Zamknięcie</th>
+                <th class="num">Zmiana</th>
+                <th class="num">Zakres</th>
+                <th class="num">Spread</th>
+              </tr>
+            </thead>
+            <tbody id="candles"></tbody>
+          </table>
+        </div>
+      </section>
+    </div>
   </main>
+  <div id="chart-tip" class="tooltip" role="status" hidden></div>
 
   <script src="js/scalp.js"></script>
+  <script src="js/market.js"></script>
   <script src="js/app.js"></script>
+  <script src="js/market-view.js"></script>
 </body>
 </html>

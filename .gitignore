@@ -1,2 +1,4 @@
 node_modules/
 .DS_Store
+scalping/server/.env
+scalping/dane/
