@@ -1,0 +1,237 @@
+<!doctype html>
+<html lang="pl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Pulpit scalpera</title>
+  <link rel="stylesheet" href="css/scalping.css">
+</head>
+<body>
+  <main class="page">
+    <header class="page-head">
+      <div>
+        <h1>Pulpit scalpera</h1>
+        <p class="muted">Wielkość pozycji, próg rentowności po prowizjach, dziennik, dzienne limity ryzyka i notowania z Capital.com.</p>
+      </div>
+      <div id="guard-pill" class="pill" role="status" aria-live="polite"></div>
+    </header>
+
+    <nav class="tabs" role="tablist" aria-label="Widok">
+      <button type="button" role="tab" id="tab-btn-calc" aria-controls="tab-calc" data-tab="calc">Kalkulator i dziennik</button>
+      <button type="button" role="tab" id="tab-btn-market" aria-controls="tab-market" data-tab="market">USTECH100 <span id="market-dot" class="dot" aria-hidden="true"></span></button>
+    </nav>
+
+    <div id="tab-calc" class="tabpanel" role="tabpanel" aria-labelledby="tab-btn-calc">
+
+    <section class="card">
+      <h2>Konto i limity dnia</h2>
+      <div class="fields">
+        <label>Kapitał <input id="capital" inputmode="decimal" autocomplete="off"></label>
+        <label>Waluta <input id="currency" maxlength="6" autocomplete="off"></label>
+        <label>Ryzyko na transakcję, % <input id="riskPct" inputmode="decimal" autocomplete="off"></label>
+        <label>Maks. dzienna strata, % <input id="maxDailyLossPct" inputmode="decimal" autocomplete="off"></label>
+        <label>Maks. transakcji dziennie <input id="maxTrades" inputmode="numeric" autocomplete="off"></label>
+        <label>Maks. strat z rzędu <input id="maxLossStreak" inputmode="numeric" autocomplete="off"></label>
+      </div>
+      <p class="muted small">Puste lub 0 w limicie = reguła wyłączona. Limity liczone są z dzisiejszych transakcji w dzienniku.</p>
+    </section>
+
+    <div class="columns">
+      <section class="card" aria-labelledby="calc-title">
+        <div class="card-head">
+          <h2 id="calc-title">Kalkulator pozycji</h2>
+          <div class="segmented" role="group" aria-label="Kierunek">
+            <button type="button" data-side="long" class="seg seg-long" title="Klawisz L">Long</button>
+            <button type="button" data-side="short" class="seg seg-short" title="Klawisz S">Short</button>
+          </div>
+        </div>
+
+        <div class="fields">
+          <label>Instrument
+            <select id="preset"></select>
+          </label>
+          <label>Wejście <input id="entry" inputmode="decimal" autocomplete="off"></label>
+          <label>Stop loss <input id="stop" inputmode="decimal" autocomplete="off"></label>
+          <label>Take profit
+            <span class="inline">
+              <select id="tpMode" aria-label="Sposób podania take profit">
+                <option value="r">× R</option>
+                <option value="price">cena</option>
+              </select>
+              <input id="tpValue" inputmode="decimal" autocomplete="off" aria-label="Wartość take profit">
+            </span>
+          </label>
+        </div>
+
+        <details class="inst">
+          <summary>Parametry instrumentu</summary>
+          <div class="fields">
+            <label title="Wartość ruchu ceny o 1 na jedną jednostkę">Mnożnik (wartość punktu) <input id="multiplier" inputmode="decimal" autocomplete="off"></label>
+            <label>Krok ceny (tick) <input id="tick" inputmode="decimal" autocomplete="off"></label>
+            <label>Krok wielkości <input id="qtyStep" inputmode="decimal" autocomplete="off"></label>
+            <label>Prowizja, % za stronę <input id="feePct" inputmode="decimal" autocomplete="off"></label>
+            <label>Prowizja za jednostkę <input id="feePerUnit" inputmode="decimal" autocomplete="off"></label>
+            <label>Min. prowizja za zlecenie <input id="feeMin" inputmode="decimal" autocomplete="off"></label>
+            <label>Maks. dźwignia <input id="leverage" inputmode="decimal" autocomplete="off"></label>
+          </div>
+          <p class="muted small">Wartości w presetach są przykładowe — wpisz stawki ze swojej tabeli opłat.
+            Prowizja za stronę = max(% · wartość + stała · ilość, minimum), naliczana przy wejściu i przy wyjściu.
+            Wyniki są w walucie kwotowania instrumentu (bez przeliczania kursu walut).</p>
+        </details>
+
+        <div id="calc-messages"></div>
+        <div id="result" class="result" aria-live="polite"></div>
+      </section>
+
+      <div class="stack">
+        <section class="card" aria-labelledby="close-title">
+          <h2 id="close-title">Zapisz transakcję</h2>
+          <form id="trade-form" class="fields" autocomplete="off">
+            <label>Symbol <input id="symbol" maxlength="20"></label>
+            <label>Ilość <input id="qty" inputmode="decimal"></label>
+            <label>Cena wyjścia
+              <input id="exit" inputmode="decimal">
+            </label>
+            <div class="quick" role="group" aria-label="Wstaw cenę wyjścia">
+              <button type="button" class="button button-ghost" data-fill="target" title="Klawisz T">TP</button>
+              <button type="button" class="button button-ghost" data-fill="stop" title="Klawisz X">SL</button>
+              <button type="button" class="button button-ghost" data-fill="breakEvenTick" title="Klawisz B">BE</button>
+            </div>
+            <label class="wide">Notatka <input id="note" maxlength="200" placeholder="setup, powód wyjścia…"></label>
+            <p id="trade-preview" class="preview wide" aria-live="polite"></p>
+            <button type="submit" class="button button-primary wide">Zapisz do dziennika</button>
+          </form>
+        </section>
+
+        <section class="card" aria-labelledby="guard-title">
+          <h2 id="guard-title">Strażnik ryzyka — dziś</h2>
+          <div id="guard" class="guard"></div>
+        </section>
+      </div>
+    </div>
+
+    <section class="card" aria-labelledby="journal-title">
+      <div class="card-head">
+        <h2 id="journal-title">Dziennik</h2>
+        <div class="control-buttons">
+          <div class="segmented" role="group" aria-label="Zakres">
+            <button type="button" data-range="today" class="seg">Dziś</button>
+            <button type="button" data-range="all" class="seg">Wszystkie</button>
+          </div>
+          <button id="export" type="button" class="button button-ghost">Eksport CSV</button>
+          <label class="button button-ghost">Import CSV
+            <input id="import" type="file" accept=".csv,text/csv" hidden>
+          </label>
+          <button id="clear" type="button" class="button button-ghost">Wyczyść</button>
+        </div>
+      </div>
+      <div id="clear-confirm" class="msg msg-error confirm" hidden>
+        <span id="clear-question"></span>
+        <span class="control-buttons">
+          <button id="clear-yes" type="button" class="button button-danger">Usuń</button>
+          <button id="clear-no" type="button" class="button button-ghost">Anuluj</button>
+        </span>
+      </div>
+      <div id="export-panel" class="export" hidden>
+        <label for="export-text" class="muted small">CSV dziennika — skopiuj i wklej do pliku .csv lub arkusza.</label>
+        <textarea id="export-text" rows="6" readonly></textarea>
+        <span class="control-buttons">
+          <button id="export-copy" type="button" class="button">Kopiuj</button>
+          <button id="export-download" type="button" class="button button-ghost">Pobierz plik</button>
+          <button id="export-close" type="button" class="button button-ghost">Zamknij</button>
+        </span>
+      </div>
+      <div id="journal-messages"></div>
+      <div id="stats" class="tiles"></div>
+      <div class="table-wrap">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Czas</th>
+              <th>Symbol</th>
+              <th>Kierunek</th>
+              <th class="num">Wejście</th>
+              <th class="num">Wyjście</th>
+              <th class="num">Ilość</th>
+              <th class="num">Prowizje</th>
+              <th class="num">Wynik netto</th>
+              <th class="num">R</th>
+              <th>Notatka</th>
+              <th><span class="sr-only">Usuń</span></th>
+            </tr>
+          </thead>
+          <tbody id="journal"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <p class="muted small">Skróty (poza polami tekstowymi): <kbd>L</kbd>/<kbd>S</kbd> kierunek,
+      <kbd>T</kbd>/<kbd>X</kbd>/<kbd>B</kbd> wyjście po TP / SL / BE, <kbd>Enter</kbd> w formularzu zapisuje transakcję.
+      Dane zapisywane są tylko w tej przeglądarce. Narzędzie pomocnicze — nie składa zleceń i nie jest poradą inwestycyjną.</p>
+    </div>
+
+    <div id="tab-market" class="tabpanel" role="tabpanel" aria-labelledby="tab-btn-market" hidden>
+      <section class="card" aria-labelledby="market-title">
+        <div class="card-head">
+          <div>
+            <h2 id="market-title">USTECH100 · świece 5 min</h2>
+            <p id="market-meta" class="muted small"></p>
+          </div>
+          <span id="market-status" class="pill"></span>
+        </div>
+        <div id="market-messages"></div>
+        <div id="market-tiles" class="tiles"></div>
+        <div class="control-buttons">
+          <button id="use-long" type="button" class="button">Wejście long po ask</button>
+          <button id="use-short" type="button" class="button">Wejście short po bid</button>
+        </div>
+      </section>
+
+      <section class="card" aria-labelledby="chart-title">
+        <div class="card-head">
+          <h2 id="chart-title">Wykres (bid)</h2>
+          <div class="segmented" role="group" aria-label="Zakres wykresu">
+            <button type="button" class="seg" data-span="36">3 h</button>
+            <button type="button" class="seg" data-span="72">6 h</button>
+            <button type="button" class="seg" data-span="144">12 h</button>
+            <button type="button" class="seg" data-span="288">24 h</button>
+          </div>
+        </div>
+        <div id="chart" class="chart" role="img" aria-label="Wykres świecowy USTECH100"></div>
+        <ul class="legend" aria-label="Legenda">
+          <li><span class="lg lg-up"></span>Świeca wzrostowa (pusta)</li>
+          <li><span class="lg lg-down"></span>Świeca spadkowa (wypełniona)</li>
+          <li><span class="lg lg-live"></span>Świeca w trakcie</li>
+        </ul>
+      </section>
+
+      <section class="card" aria-labelledby="candles-title">
+        <h2 id="candles-title">Ostatnie świece</h2>
+        <div class="table-wrap">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Czas</th>
+                <th class="num">Otwarcie</th>
+                <th class="num">Maks.</th>
+                <th class="num">Min.</th>
+                <th class="num">Zamknięcie</th>
+                <th class="num">Zmiana</th>
+                <th class="num">Zakres</th>
+                <th class="num">Spread</th>
+              </tr>
+            </thead>
+            <tbody id="candles"></tbody>
+          </table>
+        </div>
+      </section>
+    </div>
+  </main>
+  <div id="chart-tip" class="tooltip" role="status" hidden></div>
+
+  <script src="js/scalp.js"></script>
+  <script src="js/market.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/market-view.js"></script>
+</body>
+</html>

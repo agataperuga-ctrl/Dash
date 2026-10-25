@@ -3,6 +3,8 @@
 Statyczny dashboard (HTML + JS, bez zależności i bez budowania) prezentujący wyniki kwartalne
 wskaźników oraz automatycznie wykryte anomalie.
 
+Repozytorium zawiera też osobną aplikację do scalpingu — zob. [`scalping/README.md`](scalping/README.md).
+
 ## Uruchomienie
 
 Otwórz `index.html` w przeglądarce. Domyślnie ładują się syntetyczne dane przykładowe
