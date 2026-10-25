@@ -1,4 +1,4 @@
-# Scalping — kalkulator pozycji i dziennik
+# Pulpit scalpera — kalkulator pozycji i dziennik
 
 Statyczna aplikacja (HTML + JS, bez zależności i bez budowania). Otwórz `scalping/index.html` w przeglądarce.
 Nie łączy się z brokerem i nie składa zleceń — liczy, pilnuje limitów i zapisuje wyniki.

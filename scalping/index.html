@@ -3,14 +3,14 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Scalping — kalkulator i dziennik</title>
+  <title>Pulpit scalpera</title>
   <link rel="stylesheet" href="css/scalping.css">
 </head>
 <body>
   <main class="page">
     <header class="page-head">
       <div>
-        <h1>Scalping</h1>
+        <h1>Pulpit scalpera</h1>
         <p class="muted">Wielkość pozycji, próg rentowności po prowizjach, dziennik i dzienne limity ryzyka.</p>
       </div>
       <div id="guard-pill" class="pill" role="status" aria-live="polite"></div>
@@ -117,6 +117,22 @@
           </label>
           <button id="clear" type="button" class="button button-ghost">Wyczyść</button>
         </div>
+      </div>
+      <div id="clear-confirm" class="msg msg-error confirm" hidden>
+        <span id="clear-question"></span>
+        <span class="control-buttons">
+          <button id="clear-yes" type="button" class="button button-danger">Usuń</button>
+          <button id="clear-no" type="button" class="button button-ghost">Anuluj</button>
+        </span>
+      </div>
+      <div id="export-panel" class="export" hidden>
+        <label for="export-text" class="muted small">CSV dziennika — skopiuj i wklej do pliku .csv lub arkusza.</label>
+        <textarea id="export-text" rows="6" readonly></textarea>
+        <span class="control-buttons">
+          <button id="export-copy" type="button" class="button">Kopiuj</button>
+          <button id="export-download" type="button" class="button button-ghost">Pobierz plik</button>
+          <button id="export-close" type="button" class="button button-ghost">Zamknij</button>
+        </span>
       </div>
       <div id="journal-messages"></div>
       <div id="stats" class="tiles"></div>

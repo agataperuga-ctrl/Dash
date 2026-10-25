@@ -16,11 +16,12 @@
   const ACCOUNT_FIELDS = ['capital', 'riskPct', 'maxDailyLossPct', 'maxTrades', 'maxLossStreak'];
 
   const DEFAULTS = {
-    capital: 10000, currency: 'PLN', riskPct: 0.5,
+    capital: 10000, currency: 'USDT', riskPct: 0.5,
     maxDailyLossPct: 2, maxTrades: 15, maxLossStreak: 3,
-    preset: 'akcje', inst: { ...PRESETS.akcje },
-    side: 'long', entry: '', stop: '', tpMode: 'r', tpValue: '1.5',
-    symbol: '', range: 'today',
+    // Przykładowa transakcja, żeby kalkulator od razu pokazywał wynik.
+    preset: 'krypto', inst: { ...PRESETS.krypto },
+    side: 'long', entry: '60000', stop: '59400', tpMode: 'r', tpValue: '1.5',
+    symbol: 'BTC', range: 'today',
   };
 
   function load() {
@@ -372,21 +373,41 @@
 
     $$('[data-side]').forEach((b) => b.addEventListener('click', () => setSide(b.dataset.side)));
     $$('[data-fill]').forEach((b) => b.addEventListener('click', () => fillExit(b.dataset.fill)));
-    $$('[data-range]').forEach((b) => b.addEventListener('click', () => { s.range = b.dataset.range; save(); renderJournal(); }));
+    $$('[data-range]').forEach((b) => b.addEventListener('click', () => { s.range = b.dataset.range; $('#clear-confirm').hidden = true; save(); renderJournal(); }));
 
     $('#qty').addEventListener('input', () => { state.qtyTouched = $('#qty').value.trim() !== ''; renderPreview(); });
     $('#exit').addEventListener('input', renderPreview);
     $('#trade-form').addEventListener('submit', saveTrade);
 
-    $('#export').addEventListener('click', () => download(`dziennik-scalping-${today()}.csv`, S.toCsv(state.trades)));
+    // Eksport jako tekst do skopiowania — działa także tam, gdzie przeglądarka blokuje pobieranie plików.
+    $('#export').addEventListener('click', () => {
+      $('#export-text').value = S.toCsv(state.trades);
+      $('#export-panel').hidden = false;
+      $('#export-text').select();
+    });
+    $('#export-copy').addEventListener('click', () => {
+      const text = $('#export-text');
+      const copied = () => { $('#export-copy').textContent = 'Skopiowano'; setTimeout(() => { $('#export-copy').textContent = 'Kopiuj'; }, 1500); };
+      const fallback = () => { text.focus(); text.select(); document.execCommand && document.execCommand('copy') && copied(); };
+      if (navigator.clipboard) navigator.clipboard.writeText(text.value).then(copied, fallback); else fallback();
+    });
+    $('#export-download').addEventListener('click', () => download(`dziennik-scalping-${today()}.csv`, $('#export-text').value));
+    $('#export-close').addEventListener('click', () => { $('#export-panel').hidden = true; });
     $('#import').addEventListener('change', (e) => { if (e.target.files[0]) importCsv(e.target.files[0]); e.target.value = ''; });
+    // Potwierdzenie w treści strony zamiast confirm(), które w osadzonych ramkach bywa zablokowane.
+    const clearScope = () => (s.range === 'today' ? todayTrades() : state.trades);
     $('#clear').addEventListener('click', () => {
-      const range = s.range;
-      const scope = range === 'today' ? todayTrades() : state.trades;
-      if (!scope.length) return;
-      if (!confirm(range === 'today' ? `Usunąć ${scope.length} dzisiejszych transakcji?` : `Usunąć cały dziennik (${scope.length} transakcji)?`)) return;
-      const ids = new Set(scope.map((t) => t.id));
+      const n = clearScope().length;
+      if (!n) return;
+      $('#clear-question').textContent = s.range === 'today' ? `Usunąć ${n} dzisiejszych transakcji?` : `Usunąć cały dziennik (${n} transakcji)?`;
+      $('#clear-confirm').hidden = false;
+      $('#clear-no').focus();
+    });
+    $('#clear-no').addEventListener('click', () => { $('#clear-confirm').hidden = true; });
+    $('#clear-yes').addEventListener('click', () => {
+      const ids = new Set(clearScope().map((t) => t.id));
       state.trades = state.trades.filter((t) => !ids.has(t.id));
+      $('#clear-confirm').hidden = true;
       save();
       render();
     });

@@ -83,7 +83,13 @@ kbd {
   border: 1px solid var(--border); border-bottom-width: 2px; border-radius: 4px; background: var(--surface);
 }
 
-.page { max-width: 1280px; margin: 0 auto; padding: 24px 16px 48px; display: grid; gap: 16px; }
+.page {
+  max-width: 1280px; margin: 0 auto; display: grid; gap: 16px;
+  padding-block: 24px 48px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+[hidden] { display: none !important; }
 .page > * { min-width: 0; }
 .page-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 12px; }
 .page-head p { margin: 4px 0 0; }
@@ -144,6 +150,15 @@ details.inst[open] > summary { margin-bottom: 10px; }
 .msg-warn { background: var(--warning-wash); }
 .msg-ok { background: var(--good-wash); }
 .msg ul { margin: 0; padding-left: 18px; }
+.confirm { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 8px 12px; margin-bottom: 12px; }
+.button-danger { background: var(--critical); border-color: transparent; color: #fff; font-weight: 600; }
+.button-danger:hover { background: var(--critical); filter: brightness(1.08); }
+.export { display: grid; gap: 8px; margin-bottom: 12px; }
+.export .small { margin: 0; }
+textarea {
+  font: 12px/1.4 ui-monospace, SFMono-Regular, Menlo, monospace; color: var(--ink); background: var(--field);
+  border: 1px solid var(--border); border-radius: 8px; padding: 8px 10px; width: 100%; resize: vertical;
+}
 
 /* wynik kalkulatora */
 .result:not(:empty) { margin-top: 14px; display: grid; gap: 14px; }
