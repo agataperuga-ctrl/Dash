@@ -1,0 +1,9 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/sp/v2/column-formatting.schema.json",
+  "elmType": "div",
+  "style": { "display": "flex", "flex-wrap": "wrap", "padding": "2px 0" },
+  "children": [
+    { "forEach": "narzedzie in @currentField", "elmType": "span", "txtContent": "[$narzedzie]",
+      "style": { "font-size": "12px", "padding": "0 7px", "margin": "2px 4px 2px 0", "border": "1px solid #d0d0cc", "border-radius": "6px", "white-space": "nowrap" } }
+  ]
+}

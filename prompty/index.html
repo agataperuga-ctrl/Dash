@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="pl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Biblioteka promptów</title>
+  <link rel="stylesheet" href="css/prompty.css">
+</head>
+<body>
+  <main class="page">
+    <header class="page-head">
+      <div>
+        <h1>Biblioteka promptów</h1>
+        <p class="muted" id="summary" aria-live="polite"></p>
+      </div>
+      <div class="head-actions">
+        <button type="button" class="btn btn-primary" id="add-btn" title="Klawisz N">+ Dodaj prompt</button>
+        <label class="btn" title="Wczytaj CSV (np. eksport z Microsoft Lists)">Importuj CSV
+          <input type="file" id="import-file" accept=".csv,text/csv" hidden>
+        </label>
+        <button type="button" class="btn" id="export-btn">Eksportuj CSV</button>
+      </div>
+    </header>
+
+    <div id="message" role="status" aria-live="polite"></div>
+
+    <nav class="views" role="tablist" aria-label="Widok listy" id="views"></nav>
+
+    <section class="toolbar" aria-label="Filtry i sortowanie">
+      <div class="search">
+        <input type="search" id="q" placeholder="Szukaj w tytule, treści, celu i uwagach…   (skrót: /)" aria-label="Szukaj" autocomplete="off">
+      </div>
+      <div class="toolbar-row">
+        <div class="chips" role="group" aria-label="Kategoria" id="cat-chips"></div>
+      </div>
+      <div class="toolbar-row toolbar-selects">
+        <label>Gdzie działa
+          <select id="place"></select>
+        </label>
+        <label>Status
+          <select id="status"></select>
+        </label>
+        <label>Sortuj
+          <span class="inline">
+            <select id="sort-key"></select>
+            <button type="button" class="btn btn-icon" id="sort-dir" aria-label="Kierunek sortowania"></button>
+          </span>
+        </label>
+        <div class="segmented" role="group" aria-label="Układ">
+          <button type="button" data-layout="cards" class="seg">Karty</button>
+          <button type="button" data-layout="table" class="seg">Tabela</button>
+        </div>
+        <button type="button" class="btn btn-ghost" id="clear-filters">Wyczyść filtry</button>
+      </div>
+    </section>
+
+    <section id="results" aria-live="polite"></section>
+  </main>
+
+  <dialog id="editor" aria-labelledby="editor-title">
+    <form method="dialog" id="editor-form" novalidate>
+      <header class="dialog-head">
+        <h2 id="editor-title">Nowy prompt</h2>
+        <button type="button" class="btn btn-icon btn-ghost" data-close aria-label="Zamknij">✕</button>
+      </header>
+      <div class="dialog-body">
+        <div id="editor-errors" role="alert"></div>
+        <label class="field"><span>Tytuł <span class="req" aria-hidden="true">*</span></span>
+          <input name="title" required maxlength="255" autocomplete="off" placeholder="np. Streszczenie notatek ze spotkania">
+        </label>
+        <label class="field"><span>Prompt <span class="req" aria-hidden="true">*</span></span>
+          <textarea name="prompt" rows="9" required placeholder="Pełna treść promptu. Miejsca do uzupełnienia oznacz np. [NAWIASAMI]."></textarea>
+        </label>
+        <label class="field">Do czego służy
+          <textarea name="purpose" rows="2" placeholder="Kiedy i po co go użyć, czego się spodziewać"></textarea>
+        </label>
+        <div class="field-row">
+          <label class="field"><span>Kategoria <span class="req" aria-hidden="true">*</span></span>
+            <select name="category"></select>
+          </label>
+          <fieldset class="field">
+            <legend>Status</legend>
+            <div class="segmented" id="status-seg"></div>
+          </fieldset>
+        </div>
+        <fieldset class="field">
+          <legend>Gdzie działa</legend>
+          <div class="checks" id="places-checks"></div>
+        </fieldset>
+        <label class="field">Uwagi
+          <textarea name="notes" rows="2" placeholder="Ograniczenia, wskazówki, z czym działa gorzej"></textarea>
+        </label>
+        <p class="muted small" id="editor-meta"></p>
+      </div>
+      <footer class="dialog-foot">
+        <button type="button" class="btn btn-danger" id="delete-btn">Usuń</button>
+        <span class="spacer"></span>
+        <button type="button" class="btn" data-close>Anuluj</button>
+        <button type="submit" class="btn btn-primary" value="save">Zapisz</button>
+      </footer>
+    </form>
+  </dialog>
+
+  <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+
+  <script src="js/prompts.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

@@ -3,7 +3,10 @@
 Statyczny dashboard (HTML + JS, bez zależności i bez budowania) prezentujący wyniki kwartalne
 wskaźników oraz automatycznie wykryte anomalie.
 
-Repozytorium zawiera też osobną aplikację do scalpingu — zob. [`scalping/README.md`](scalping/README.md).
+Repozytorium zawiera też osobne aplikacje:
+
+- pulpit do scalpingu — zob. [`scalping/README.md`](scalping/README.md),
+- bibliotekę promptów zespołu (lista SharePoint + widok w przeglądarce) — zob. [`prompty/README.md`](prompty/README.md).
 
 ## Uruchomienie
 
