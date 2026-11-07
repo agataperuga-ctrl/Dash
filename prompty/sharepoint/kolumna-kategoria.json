@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/sp/v2/column-formatting.schema.json",
+  "elmType": "div",
+  "style": { "display": "=if(@currentField == '', 'none', 'inline-flex')", "align-items": "center", "padding": "1px 10px", "border-radius": "12px", "font-size": "12px", "font-weight": "600", "color": "#1b1b1b",
+    "background-color": "=if(@currentField == 'pisanie', '#dbe8f9', if(@currentField == 'analiza', '#e9e1f8', if(@currentField == 'Excel', '#d7ecdf', if(@currentField == 'spotkania', '#f7e2d3', '#ebebe9'))))" },
+  "children": [
+    { "elmType": "span", "style": { "width": "8px", "height": "8px", "border-radius": "50%", "margin-right": "6px",
+        "background-color": "=if(@currentField == 'pisanie', '#2a78d6', if(@currentField == 'analiza', '#7a4fd0', if(@currentField == 'Excel', '#157a3c', if(@currentField == 'spotkania', '#c2570c', '#6f6e69'))))" } },
+    { "elmType": "span", "txtContent": "@currentField" }
+  ]
+}

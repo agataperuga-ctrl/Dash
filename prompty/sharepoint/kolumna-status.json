@@ -1,0 +1,8 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/sp/v2/column-formatting.schema.json",
+  "elmType": "div",
+  "style": { "display": "=if(@currentField == '', 'none', 'inline-flex')", "padding": "1px 10px", "border-radius": "12px", "font-size": "12px", "font-weight": "600",
+    "color": "=if(@currentField == 'Sprawdzony', '#0b5a0b', '#7a4f00')",
+    "background-color": "=if(@currentField == 'Sprawdzony', '#d9f0d9', '#fdecc4')" },
+  "txtContent": "=if(@currentField == 'Sprawdzony', '✓ ', '✎ ') + @currentField"
+}
